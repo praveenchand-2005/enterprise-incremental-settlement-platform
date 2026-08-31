@@ -15,4 +15,4 @@ jobs:
       - name: Build runtime
         run: docker compose -f docker-compose.real-hudi.yml build spark
       - name: Run validation
-        run: docker compose -f docker-compose.real-hudi.yml run --rm spark python integration/hudi_real_validation.py
+        run: docker compose -f docker-compose.real-hudi.yml run --rm spark python3 integration/hudi_real_validation.py
