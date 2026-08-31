@@ -1,0 +1,18 @@
+name: Real Hudi Integration
+on:
+  workflow_dispatch:
+  push:
+    paths: ["hudi-payload/**", "spark/**", "integration/**", "docker/**"]
+jobs:
+  hudi:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build merger
+        working-directory: hudi-payload
+        run: mvn -B -DskipTests package
+      - name: Build runtime
+        run: docker compose -f docker-compose.real-hudi.yml build spark
+      - name: Run validation
+        run: docker compose -f docker-compose.real-hudi.yml run --rm spark python integration/hudi_real_validation.py
