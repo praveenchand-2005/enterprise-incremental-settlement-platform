@@ -1,0 +1,17 @@
+{
+  "problem": "incremental mutable trip/order settlement",
+  "correctness": [
+    "late updates to old entities are applied",
+    "duplicate source events are idempotent",
+    "nested state is reconciled without a table-level self-join",
+    "merge is associative",
+    "checkpoint advances only after successful publication"
+  ],
+  "performance_goal": "work should scale with changed entities rather than historical window size",
+  "runtime_proof_required": [
+    "real Spark + Hudi execution",
+    "real Hudi commit-to-commit incremental read",
+    "compiled HoodieRecordMerger execution",
+    "I/O benchmark"
+  ]
+}
