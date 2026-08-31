@@ -10,14 +10,62 @@ A high-volume transaction platform receives refunds, tips, disputes, and adjustm
 
 **Hudi commit → incremental latest_state → affected entities → custom merge → typed Trip/Order state → rule engine → final Hudi state.**
 
-The project includes deterministic correctness tests, an adversarial late-event case, Spark/Hudi Docker runtime definitions, CI integration, benchmarks, runbooks, and a freelance case study.
+## Core implementation
+
+- Typed trip/order domain model
+- Deterministic nested-state merge contract
+- Idempotent event identity
+- Composable settlement rules
+- Durable publish-then-checkpoint semantics
+- Hudi `latest_state` incremental reader boundary
+- Hudi `CUSTOM` merge configuration and `HoodieRecordMerger` adapter
+- Spark/Hudi Docker runtime
+- GitHub Actions deterministic and real-runtime workflows
+- Adversarial late-event benchmark
+- Freelance case study and architecture documentation
 
 ## Validation
 
-The deterministic suite contains 24+ tests covering late updates, duplicate delivery, merge idempotence/associativity, data quality, replay, and checkpoint semantics.
+The local release contains **24+ deterministic tests** covering late updates, duplicate delivery, merge idempotence/associativity, data quality, replay, and checkpoint semantics.
 
-The distributed Spark/Hudi benchmark is intentionally not claimed as executed unless it runs in a Docker/Maven-capable environment.
+The distributed Spark/Hudi benchmark is intentionally **not claimed as executed** unless it runs in a Docker/Maven-capable environment.
+
+## Architecture
+
+```text
+Operational sources / CDC / events
+              |
+              v
+        Apache Hudi state
+              |
+       incremental latest_state
+              |
+              v
+       affected entities
+              |
+       custom merge boundary
+              |
+              v
+      typed Trip / Order state
+              |
+              v
+        settlement rules
+              |
+              v
+      final Hudi settlement
+              |
+          BI / SQL / API
+```
+
+See `docs/architecture.md`, `portfolio/bid-case-study.md`, and `integration/` for the runtime acceptance path.
+
+## Real runtime
+
+```bash
+docker compose -f docker-compose.real-hudi.yml build spark
+bash integration/run-real-hudi.sh
+```
 
 ## Reference
 
-The architecture is independently inspired by the publicly documented Uber/Hudi incremental collection problem; it contains no proprietary Uber source code or data.
+The architecture is independently inspired by the publicly documented Uber/Hudi incremental collection problem; it contains no proprietary Uber source code or data. Reference-company production metrics are not presented as this project's results.
